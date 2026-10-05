@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <!-- include helper xacros -->
+  <xacro:include filename="$(find kmr_iiwa_urdf)/urdf/common_materials.xacro"/>
+  <xacro:macro name="kuka_kmp200" params="prefix">
+    
+  <link name="${prefix}_base_link">
+    <inertial>
+    <origin xyz="0 0 0.35" rpy="0 0 0"/>
+    <mass value="397.0"/><inertia
+      ixx="29.36" iyy="54.90" izz="51.84" 
+      ixy="0.0" ixz="0.0" iyz="0.0"/>
+      </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find kmr_iiwa_urdf)/meshes/kmp200/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <xacro:material_kuka_ral_pearly_white/>
+    </visual>
+    <!-- <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find kmr_iiwa_urdf)/meshes/kmp200/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision> -->
+    <collision name="base_collision">
+      <origin xyz="0 0 0.35" rpy="0 0 0"/>
+      <geometry>
+        <box size="1.08 0.63 0.70"/>
+      </geometry>
+    </collision>
+  </link>
+  </xacro:macro>
+</robot>

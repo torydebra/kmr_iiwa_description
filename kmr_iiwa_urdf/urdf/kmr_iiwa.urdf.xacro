@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<robot name="kmr" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find kmr_iiwa_urdf)/urdf/kmp200_macro.urdf.xacro"/>
+  <xacro:kuka_kmp200 prefix="kmp200_"/>
+
+
+
+  <!-- <xacro:include filename="$(find kmr_iiwa_urdf)/urdf/lbr_iiwa14_r820_macro.urdf.xacro"/> -->
+  <!-- <xacro:kuka_lbr_iiwa14_r820_robot prefix="iiwa_"/> -->
+  <!-- <joint name="kmp200_base_link_to_iiwa_base_link" type="fixed">
+    <origin xyz="0.3633 -0.1842 0.7011" rpy="0 0 -1.5708"/>
+    <parent link="kmp200_base_link"/>
+    <child link="iiwa_base_link"/>
+  </joint> -->
+
+
+
+  <xacro:include filename="$(find lbr_iiwa14_r820_description)/urdf/lbr_iiwa14_r820_macro.xacro" />
+  <xacro:lbr_iiwa14_r820
+    robot_name="lbr"
+    joint_limits_path="$(find lbr_iiwa14_r820_description)/config/joint_limits.yaml" />
+  <joint name="kmp200_base_link_to_iiwa_base_link" type="fixed">
+    <origin xyz="0.3633 -0.1842 0.7011" rpy="0 0 -1.5708"/>
+    <parent link="kmp200_base_link"/>
+    <child link="lbr_link_0"/>
+  </joint>
+
+  <plugin name='planar_move' filename='libgazebo_ros_planar_move.so'>
+      <ros>
+        <argument>cmd_vel:=cmd_vel</argument>
+        <argument>odom:=odom</argument>
+      </ros>
+
+      <update_rate>100</update_rate>
+      <publish_rate>10</publish_rate>
+
+      <!-- output -->
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+
+      <covariance_x>0.0001</covariance_x>
+      <covariance_y>0.0001</covariance_y>
+      <covariance_yaw>0.01</covariance_yaw>
+  </plugin>
+</robot>

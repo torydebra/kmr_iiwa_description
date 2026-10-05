@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<robot name="kmr" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find kmr_iiwa_urdf)/urdf/kmp200_macro.urdf.xacro"/>
+  <xacro:include filename="$(find lbr_iiwa14_r820_description)/urdf/lbr_iiwa14_r820_macro.xacro" />
+  <xacro:include filename="$(find lbr_ros2_control)/urdf/lbr_gazebo.xacro" />
+  <xacro:include filename="$(find lbr_ros2_control)/urdf/lbr_system_interface.xacro" />
+  <xacro:include filename="$(find gz_virtual_base_system)/urdf/virtual_base_macro.urdf.xacro" />
+
+  <!-- arguments -->
+  <xacro:arg name="robot_name" default="kmp_iiwa" />
+  <xacro:arg name="base_name" default="kmp" />
+  <xacro:arg name="arm_name" default="iiwa" />
+  <xacro:arg name="mode" default="gazebo" />
+  <xacro:arg
+      name="system_config_path"
+      default="$(find lbr_ros2_control)/config/lbr_system_config.yaml" />
+  <xacro:arg
+      name="initial_joint_positions_path"
+      default="$(find lbr_ros2_control)/config/initial_joint_positions.yaml" />
+      
+  <!-- ROBOT -->
+
+  <xacro:kuka_kmp200 prefix="$(arg base_name)"/>
+
+  <xacro:lbr_iiwa14_r820
+    robot_name="$(arg robot_name)"/>
+  <joint name="$(arg base_name)_to_$(arg robot_name)_link_0" type="fixed">
+    <origin xyz="0.3633 -0.1842 0.7011" rpy="0 0 -1.5708"/>
+    <parent link="$(arg base_name)_base_link"/>
+    <child link="$(arg robot_name)_link_0"/>
+  </joint>
+
+  <!-- gaebo plugins -->
+
+  <xacro:lbr_gazebo 
+    robot_name="$(arg robot_name)"
+    controller_config_path="$(find kmr_iiwa_urdf)/config/controllers/gazebo.yaml" />
+  <xacro:lbr_system_interface
+    robot_name="$(arg robot_name)"
+    mode="$(arg mode)"
+    system_config_path="$(arg system_config_path)"
+    initial_joint_positions_path="$(arg initial_joint_positions_path)" />
+
+ <!-- OPTION 1. Gazebo plugin that call setVelocity Gazebo API. Works
+  strangely, base speed is too low -->
+  <!-- <xacro:include filename="$(find gazebo_planar_move_plugin)/urdf/plugin_macro.urdf.xacro" />
+  <xacro:planar_move_plugin
+    robot_name="$(arg robot_name)"
+    base_name="$(arg base_name)_base_link" /> -->
+
+ <!-- OPTION 2. virtual joints to just be controlled directly, with possibly
+ external script to compute correct rotations-->
+  <!-- <ros2_control name="base_joints" type="system">
+  <hardware>
+    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+  </hardware>
+  <joint name="virtual_joint_x">
+    <command_interface name="velocity"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+  </joint>
+  <joint name="virtual_joint_y">
+    <command_interface name="velocity"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+  </joint>
+  <joint name="virtual_joint_yaw">
+    <command_interface name="velocity"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+  </joint>
+  </ros2_control> -->
+
+  <!-- OPTION 3. virtual joints, virtual base system -->
+  <link name="world"/>
+  <xacro:virtual_base_system world_link="world" base_link="$(arg base_name)_base_link" />
+
+</robot>
