@@ -16,8 +16,16 @@ https://github.com/kidpaul94/kmr-iiwa-gripkit-cr-plus-l/tree/main
 ## Arm description
 Geometry, kinematic, meshes, ROS2 controllers taken from what should be the official one  https://github.com/lbr-stack/lbr_fri_ros2_stack/tree/582fbb06d0b964f1a6fc49fe48c6ee132c0d8b9f/lbr_description/urdf/iiwa14
 
+# Code
 
-## Available Arm controllers
+## arm + base software
+- https://github.com/LAKY911/kmriiwa_ws_devel/, check also its fork of fork. Built as kuka sunrise application, so sunrise workbench is necessary
+- https://github.com/stoic-roboticist/kmriiwa_ros_java, and https://github.com/stoic-roboticist/kmriiwa_ros_stack , with relative ROSCON presentation https://vimeo.com/649644996. The first repo 
+
+## mobile base code
+- https://github.com/JonahEggenkemper/kuka-kmr-project/tree/main. Using custom java-ros1 interface to control the mobile base in ros1
+
+## kuka IIWA Arm controllers
 - first google results, lot of star, ros2, only arm https://github.com/ICube-Robotics/iiwa_ros2
 - another with some starts https://github.com/idra-lab/kuka_lbr_control, Trento Uni
 
