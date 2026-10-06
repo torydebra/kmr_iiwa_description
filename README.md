@@ -19,7 +19,7 @@ Geometry, kinematic, meshes, ROS2 controllers taken from what should be the offi
 # Code
 
 ## arm + base software
-- https://github.com/LAKY911/kmriiwa_ws_devel/, check also its fork of fork
+- https://github.com/LAKY911/kmriiwa_ws_devel/, check also its fork of fork. It seems that kuka sunrise workbench is necessary to install the java code?
 
 ## mobile base code
 - https://github.com/JonahEggenkemper/kuka-kmr-project/tree/main. Using custom java-ros1 interface to control the mobile base in ros1
