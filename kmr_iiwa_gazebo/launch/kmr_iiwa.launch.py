@@ -12,7 +12,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 from launch_ros.actions import Node
 import xacro
@@ -52,7 +52,7 @@ def generate_launch_description():
         )
         robot_desc = robot_description_config.toxml()
 
-        return [SetLaunchConfiguration("robot_desc_full", robot_desc)]
+        return [SetLaunchConfiguration("robot_desc", robot_desc)]
 
     create_robot_description_arg = OpaqueFunction(
         function=create_robot_description
@@ -104,13 +104,23 @@ def generate_launch_description():
     )
 
     ### Gazebo to ROS stuff
-
-    ros_gz_clock = Node(
+    ros_gz_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        arguments=["/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock"],
+        arguments=[
+            "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
+            PythonExpression([
+                "'/", LaunchConfiguration("robot_name"),
+                "/lidar_front_right@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'"
+            ]),
+            PythonExpression([
+                "'/", LaunchConfiguration("robot_name"),
+                "/lidar_back_left@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'"
+            ]),
+        ],
         output="screen",
     )
+
 
     robot_state_publisher = Node(
         package="robot_state_publisher",
@@ -119,7 +129,7 @@ def generate_launch_description():
         output="screen",
         parameters=[
             {"use_sim_time": LaunchConfiguration("use_sim_time")},
-            {"robot_description": LaunchConfiguration("robot_desc_full")},
+            {"robot_description": LaunchConfiguration("robot_desc")},
         ],
         namespace=LaunchConfiguration("robot_name"),
     )
@@ -170,6 +180,6 @@ def generate_launch_description():
         robot_state_publisher,
         spawn_active_controllers,
         spawn_deactive_controllers,
-        ros_gz_clock,
+        ros_gz_bridge,
         rviz,
     ])
