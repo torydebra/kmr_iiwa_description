@@ -73,8 +73,16 @@
   </ros2_control> -->
 
   <!-- OPTION 3. virtual joints, virtual base system -->
-  <link name="world"/>
-  <xacro:virtual_base_system world_link="world" base_link="$(arg base_name)_base_link" />
+  <link name="odom">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia
+        ixx="1e-6" ixy="0" ixz="0"
+        iyy="1e-6" iyz="0"
+        izz="1e-6"/>
+    </inertial>
+  </link>
+  <xacro:virtual_base_system world_link="odom" base_link="$(arg base_name)_base_link" />
 
   <!-- Sensors -->
   <gazebo reference="$(arg base_name)_lidar_front_right_link">
