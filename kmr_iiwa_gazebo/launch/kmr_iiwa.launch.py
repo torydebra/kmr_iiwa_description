@@ -1,7 +1,6 @@
 import os
 from ament_index_python.packages import (
     get_package_share_directory,
-    get_package_prefix,
 )
 from launch import LaunchDescription
 from launch.actions import (
@@ -12,7 +11,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression, PathJoinSubstitution
 
 from launch_ros.actions import Node
 import xacro
@@ -20,12 +19,24 @@ import xacro
 
 def generate_launch_description():
 
+    # Setup project paths
+    pkg_project = get_package_share_directory('kmr_iiwa_gazebo')
+    pkg_kmr_iiwa_urdf = get_package_share_directory('kmr_iiwa_urdf')
+    pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
+
     # External args
     robot_name_arg = DeclareLaunchArgument("robot_name", default_value="kmr_iiwa")
     arm_name_arg = DeclareLaunchArgument("arm_name", default_value="iiwa")
     use_sim_time_arg = DeclareLaunchArgument(
         "use_sim_time", default_value="true"
     )
+    world_arg = DeclareLaunchArgument(
+        "world",
+        default_value=PathJoinSubstitution([
+            pkg_project, "world", "kmr_iiwa.world",
+        ]),
+    )
+
     x_arg = DeclareLaunchArgument("x", default_value="0")    
     y_arg = DeclareLaunchArgument("y", default_value="0")
     z_arg = DeclareLaunchArgument("z", default_value="0")
@@ -34,10 +45,7 @@ def generate_launch_description():
     Y_arg = DeclareLaunchArgument("Y", default_value="0")
     rviz_arg = DeclareLaunchArgument("rviz", default_value="true")
 
-    # Setup project paths
-    pkg_project = get_package_share_directory('kmr_iiwa_gazebo')
-    pkg_kmr_iiwa_urdf = get_package_share_directory('kmr_iiwa_urdf')
-    pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
+
 
     # Opaque function to use the launch argument inside here
     def create_robot_description(context):
@@ -67,18 +75,17 @@ def generate_launch_description():
         ],
         condition=IfCondition(LaunchConfiguration("rviz")),
         parameters=[
-            {"use_sim_time": True},
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
         ],
     )
 
     ############ Simulation stuff
     # Simulator launch file
-    world_file = pkg_project + '/world/kmr_iiwa.world'
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")),
         launch_arguments={
-            'gz_args': " -r " + world_file
-            #'gz_args': world_file
+            "gz_args": ["-r ", LaunchConfiguration("world")]
+            #'gz_args': LaunchConfiguration("world")
         }.items()
     )
 
@@ -141,7 +148,7 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "--controller-manager", "controller_manager", #just the name of the controller_manager
-            "joint_state_broadcaster",
+            "joint_state_broadcaster", "base_velocity_controller",
         ],
         parameters=[
             {"use_sim_time": LaunchConfiguration("use_sim_time")},
@@ -155,7 +162,7 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "--controller-manager", "controller_manager", #just the name of the controller_manager
-            "--inactive", "joint_trajectory_controller", "forward_position_controller", "base_velocity_controller",
+            "--inactive", "joint_trajectory_controller", "forward_position_controller",
         ],
         parameters=[
             {"use_sim_time": LaunchConfiguration("use_sim_time")},
@@ -167,6 +174,7 @@ def generate_launch_description():
         use_sim_time_arg,
         robot_name_arg,
         arm_name_arg,
+        world_arg,
         rviz_arg,
         x_arg,
         y_arg,
