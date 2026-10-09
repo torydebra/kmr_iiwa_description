@@ -6,9 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /RobotModel1
-        - /TF1
         - /TF1/Frames1
+        - /Map1
       Splitter Ratio: 0.545976996421814
     Tree Height: 535
   - Class: rviz_common/Selection
@@ -125,15 +124,15 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        odom:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         virtual_base_link_x:
           Alpha: 1
           Show Axes: false
           Show Trail: false
         virtual_base_link_y:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        world:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -176,19 +175,19 @@ Visualization Manager:
           Value: false
         kmr_iiwa_link_ee:
           Value: true
+        odom:
+          Value: true
         virtual_base_link_x:
           Value: false
         virtual_base_link_y:
           Value: false
-        world:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        world:
+        odom:
           virtual_base_link_x:
             virtual_base_link_y:
               kmp_base_link:
@@ -223,9 +222,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 0
+      Max Intensity: -999999
       Min Color: 0; 0; 0
-      Min Intensity: 0
+      Min Intensity: 999999
       Name: LidarBackLeft
       Position Transformer: XYZ
       Selectable: true
@@ -276,10 +275,33 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
+    - Alpha: 0.699999988079071
+      Binary representation: false
+      Binary threshold: 100
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: world
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -337,10 +359,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.1403990387916565
+      Pitch: 0.38539910316467285
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.3841090202331543
+      Yaw: 2.08410906791687
     Saved: ~
 Window Geometry:
   Displays:
@@ -358,5 +380,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1440
-  X: 1920
-  Y: 157
+  X: 2064
+  Y: 113
